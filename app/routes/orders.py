@@ -23,17 +23,17 @@ def get_order(order_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=schemas.OrderResponse, status_code=201)
-def create_order(order_in: schemas.OrderCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    if order_in.driver_id is not None:
-        driver = db.query(models.User).filter(models.User.id == order_in.driver_id).first()
+def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    if order.driver_id is not None:
+        driver = db.query(models.User).filter(models.User.id == order.driver_id).first()
         if driver is None:
             raise HTTPException(status_code=404, detail="Driver not found")
         if driver.role != models.UserRole.driver:
             raise HTTPException(status_code=400, detail="Assigned user is not a driver")
 
     new_order = models.Order(
-        description=order_in.description,
-        driver_id=order_in.driver_id,
+        description=order.description,
+        driver_id=order.driver_id,
         status=models.OrderStatus.placed,
     )
     db.add(new_order)

@@ -51,14 +51,3 @@ class TokenResponse(BaseModel):
 
 class ReassignRequest(BaseModel):
     driver_id: int
-
-
-class StatusHistoryResponse(BaseModel):
-    id: int
-    order_id: int
-    old_status: Optional[OrderStatus]
-    new_status: OrderStatus
-    changed_by: int
-    changed_at: datetime
-
-    model_config = {"from_attributes": True}

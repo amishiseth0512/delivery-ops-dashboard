@@ -19,7 +19,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 
-def create_token(user_id: int, role: str) -> str:
+def create_token(user_id: int, role: str):
     expire = datetime.now(timezone.utc) + timedelta(hours=1)
     payload = {"sub": str(user_id), "role": role, "exp": expire}
     return jwt.encode(payload, SECRET_KEY, algorithm="HS256")

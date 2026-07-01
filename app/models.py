@@ -27,8 +27,8 @@ class User(Base):
     hashed_password = Column(String(255), nullable=False)
     role = Column(Enum(UserRole), nullable=False)
 
-    orders_assigned = relationship("Order", back_populates="driver", foreign_keys="Order.driver_id")
-    status_changes_made = relationship("OrderStatusHistory", back_populates="changed_by_user")
+    orders = relationship("Order", back_populates="driver", foreign_keys="Order.driver_id")
+    history = relationship("OrderStatusHistory", back_populates="user")
 
 
 class Order(Base):
@@ -40,7 +40,7 @@ class Order(Base):
     driver_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # order can be unassigned
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
-    driver = relationship("User", back_populates="orders_assigned", foreign_keys=[driver_id])
+    driver = relationship("User", back_populates="orders", foreign_keys=[driver_id])
     status_history = relationship("OrderStatusHistory", back_populates="order")
 
 
@@ -55,4 +55,4 @@ class OrderStatusHistory(Base):
     changed_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     order = relationship("Order", back_populates="status_history")
-    changed_by_user = relationship("User", back_populates="status_changes_made")
+    user = relationship("User", back_populates="history")

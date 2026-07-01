@@ -14,16 +14,16 @@ def list_users(db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=schemas.UserResponse, status_code=201)
-def create_user(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
-    existing = db.query(models.User).filter(models.User.email == user_in.email).first()
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    existing = db.query(models.User).filter(models.User.email == user.email).first()
     if existing:
         raise HTTPException(status_code=409, detail="Email already registered")
 
     new_user = models.User(
-        name=user_in.name,
-        email=user_in.email,
-        hashed_password=pwd_context.hash(user_in.password),
-        role=user_in.role,
+        name=user.name,
+        email=user.email,
+        hashed_password=pwd_context.hash(user.password),
+        role=user.role,
     )
     db.add(new_user)
     db.commit()
