@@ -39,6 +39,20 @@ class OrderResponse(OrderBase):
     model_config = {"from_attributes": True}
 
 
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class ReassignRequest(BaseModel):
+    driver_id: int
+
+
 class StatusHistoryResponse(BaseModel):
     id: int
     order_id: int

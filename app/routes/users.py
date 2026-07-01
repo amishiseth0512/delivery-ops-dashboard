@@ -1,15 +1,11 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
-
 from app.database import get_db
 from app import models, schemas
+from app.auth import pwd_context
 
 router = APIRouter(prefix="/users", tags=["users"])
-
-# bcrypt is intentionally slow, which makes brute-forcing hashed passwords expensive
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 @router.get("/", response_model=List[schemas.UserResponse])
