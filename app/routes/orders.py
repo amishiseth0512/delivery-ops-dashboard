@@ -10,7 +10,7 @@ router = APIRouter(prefix="/orders", tags=["orders"])
 
 
 @router.get("/", response_model=List[schemas.OrderResponse])
-def list_orders(db: Session = Depends(get_db)):
+def list_orders(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     return db.query(models.Order).all()
 
 
@@ -49,6 +49,29 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db), curr
     db.commit()
     db.refresh(new_order)
     return new_order
+
+
+@router.patch("/{order_id}/status", response_model=schemas.OrderResponse)
+def update_status(order_id: int, body: schemas.StatusUpdateRequest, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    order = db.query(models.Order).filter(models.Order.id == order_id).first()
+    if order is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+    if current_user.role == models.UserRole.driver and order.driver_id != current_user.id:
+        raise HTTPException(status_code=403, detail="You can only update your own orders")
+
+    old_status = order.status
+    order.status = body.status
+
+    history = models.OrderStatusHistory(
+        order_id=order.id,
+        old_status=old_status,
+        new_status=body.status,
+        changed_by=current_user.id,
+    )
+    db.add(history)
+    db.commit()
+    db.refresh(order)
+    return order
 
 
 @router.patch("/{order_id}/reassign", response_model=schemas.OrderResponse)

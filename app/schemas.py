@@ -51,3 +51,7 @@ class TokenResponse(BaseModel):
 
 class ReassignRequest(BaseModel):
     driver_id: int
+
+
+class StatusUpdateRequest(BaseModel):
+    status: OrderStatus
