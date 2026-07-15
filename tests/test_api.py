@@ -9,8 +9,6 @@ from app.main import app
 from app.database import Base, get_db
 from app.models import User, UserRole
 
-# SQLite in-memory for tests. StaticPool makes every connection share the same
-# in-memory database — without it each connection gets a separate empty DB.
 engine = create_engine(
     "sqlite:///:memory:",
     connect_args={"check_same_thread": False},

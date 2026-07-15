@@ -15,7 +15,6 @@ if not SECRET_KEY:
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# tokenUrl tells Swagger UI where the login endpoint is, so the Authorize button works
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 

@@ -37,7 +37,7 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db), curr
         status=models.OrderStatus.placed,
     )
     db.add(new_order)
-    db.flush()  # flush gives new_order an id before we commit, so we can use it below
+    db.flush()
 
     history = models.OrderStatusHistory(
         order_id=new_order.id,

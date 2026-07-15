@@ -37,7 +37,7 @@ class Order(Base):
     id = Column(Integer, primary_key=True, index=True)
     description = Column(Text, nullable=False)
     status = Column(Enum(OrderStatus), nullable=False, default=OrderStatus.placed)
-    driver_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # order can be unassigned
+    driver_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     driver = relationship("User", back_populates="orders", foreign_keys=[driver_id])
@@ -49,7 +49,7 @@ class OrderStatusHistory(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
-    old_status = Column(Enum(OrderStatus), nullable=True)  # null on the very first entry
+    old_status = Column(Enum(OrderStatus), nullable=True)
     new_status = Column(Enum(OrderStatus), nullable=False)
     changed_by = Column(Integer, ForeignKey("users.id"), nullable=False)
     changed_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

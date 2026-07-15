@@ -9,7 +9,6 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL is not set. Copy .env.example to .env and fill it in.")
 
-# pool_pre_ping avoids "connection closed" errors after the DB has been idle
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

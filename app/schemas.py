@@ -18,7 +18,6 @@ class UserCreate(UserBase):
 class UserResponse(UserBase):
     id: int
 
-    # needed so Pydantic can read SQLAlchemy model attributes, not just plain dicts
     model_config = {"from_attributes": True}
 
 
