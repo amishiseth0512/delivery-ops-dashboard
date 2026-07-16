@@ -30,3 +30,27 @@ orders, or as a driver to see your assigned ones.
 
 **Tests:**
 pytest tests/
+
+## AI Operations Assistant
+
+Dispatchers can ask plain-English questions about current deliveries
+(e.g. "which orders need attention?") and get a short answer generated
+from the live order data in the database — it only uses what's actually
+in the DB, it won't make things up.
+
+Set these in your `.env` (get a key at https://platform.openai.com/api-keys):
+
+OPENAI_API_KEY=your-openai-api-key
+OPENAI_MODEL=gpt-4o-mini
+
+Example questions:
+- Which deliveries need attention?
+- Which driver has the highest workload?
+- Summarize today's deliveries.
+- Which orders have been in transit the longest?
+- Are there any cancelled deliveries?
+- What should the dispatcher prioritize next?
+
+If `OPENAI_API_KEY` is missing, or the key has no quota left, the
+assistant card shows a friendly error instead of crashing — the rest
+of the dashboard keeps working normally.

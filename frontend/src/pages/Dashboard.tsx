@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { getOrders, getUsers, reassignOrder } from '../api'
 import type { Order, User } from '../api'
 import ReassignModal from '../components/ReassignModal'
+import AIAssistant from '../components/AIAssistant'
 import { getUserId } from '../auth'
 
 type Props = {
@@ -43,6 +44,8 @@ export default function Dashboard({ onLogout }: Props) {
             Log out
           </button>
         </div>
+
+        <AIAssistant />
 
         {myName && <p className="text-gray-600 mb-4">Welcome, {myName}! Here's an overview of all orders.</p>}
 

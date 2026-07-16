@@ -54,3 +54,12 @@ class ReassignRequest(BaseModel):
 
 class StatusUpdateRequest(BaseModel):
     status: OrderStatus
+
+
+class AssistantRequest(BaseModel):
+    question: str
+
+
+class AssistantResponse(BaseModel):
+    answer: str
+    generated_at: datetime

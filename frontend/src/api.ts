@@ -17,6 +17,11 @@ export type User = {
   role: string
 }
 
+export type AssistantResponse = {
+  answer: string
+  generated_at: string
+}
+
 function authHeaders() {
   return {
     'Content-Type': 'application/json',
@@ -61,5 +66,18 @@ export async function updateOrderStatus(orderId: number, status: string) {
     body: JSON.stringify({ status }),
   })
   if (!res.ok) throw new Error('Failed to update status')
+  return res.json()
+}
+
+export async function askAssistant(question: string): Promise<AssistantResponse> {
+  const res = await fetch(`${BASE}/api/ai/assistant`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ question }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => null)
+    throw new Error(body?.detail || 'Failed to get a response from the assistant')
+  }
   return res.json()
 }

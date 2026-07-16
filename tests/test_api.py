@@ -105,3 +105,62 @@ def test_reassign_as_driver(seed_users):
         headers={"Authorization": f"Bearer {b_tok}"},
     )
     assert res.status_code == 403
+
+
+def test_ai_assistant_empty_question(seed_users, monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    tok = get_token("alice@test.com", "pass123")
+    res = client.post(
+        "/api/ai/assistant",
+        json={"question": "   "},
+        headers={"Authorization": f"Bearer {tok}"},
+    )
+    assert res.status_code == 400
+
+
+def test_ai_assistant_without_api_key(seed_users, monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    tok = get_token("alice@test.com", "pass123")
+    res = client.post(
+        "/api/ai/assistant",
+        json={"question": "Which deliveries need attention?"},
+        headers={"Authorization": f"Bearer {tok}"},
+    )
+    assert res.status_code == 503
+
+
+def test_ai_assistant_success(seed_users, monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+
+    class FakeMessage:
+        content = "Order #1 needs attention because it has been in transit the longest."
+
+    class FakeChoice:
+        message = FakeMessage()
+
+    class FakeResponse:
+        choices = [FakeChoice()]
+
+    class FakeCompletions:
+        def create(self, *args, **kwargs):
+            return FakeResponse()
+
+    class FakeChat:
+        completions = FakeCompletions()
+
+    class FakeClient:
+        def __init__(self, api_key):
+            self.chat = FakeChat()
+
+    monkeypatch.setattr("app.services.ai_assistant.OpenAI", FakeClient)
+
+    tok = get_token("alice@test.com", "pass123")
+    res = client.post(
+        "/api/ai/assistant",
+        json={"question": "Which orders need attention?"},
+        headers={"Authorization": f"Bearer {tok}"},
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert "answer" in body
+    assert "generated_at" in body
